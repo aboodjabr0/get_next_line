@@ -14,29 +14,15 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <unistd.h>
+#define BUFF_SIZE 1024
 
-// char *get_next_line(int fd)
-// {
-     
-// }
-
-
-int main()
+char	read_file(int fd, char *buffer)
 {
-    static char *buff;
-    int fd;
-    int bytes_read;
-    fd = open("hello.txt", O_RDONLY);
-    buff = ft_calloc(sizeof(char), 100);
-    if (!buff)
-    {
-        return (NULL);
-    }
-    if (fd == -1)
-    return (-1);
-    bytes_read = read(fd, buff, sizeof(buff));
-    ft_strchr(buff, '\n');
-    
-    close(fd);
-    return(fd);
+
+}
+
+char *get_next_line(int fd)
+{
+     
 }
