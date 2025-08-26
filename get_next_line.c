@@ -3,62 +3,131 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asauafth <asauafth@Amman.42.fr>            +#+  +:+       +#+        */
+/*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/20 14:36:56 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/21 18:43:07 by asauafth         ###   ########.fr       */
+/*   Created: 2025/08/26 13:10:23 by asauafth          #+#    #+#             */
+/*   Updated: 2025/08/26 20:24:08 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char *ft_join(char *full_file, char *s_chunk)
+char	*ft_join(char *full_file, char *s_chunk)
 {
-    char *tmp;
+	char	*tmp;
 
-    tmp = ft_strjoin(full_file, s_chunk);
-    free (full_file);
-    return(tmp);
-}
-char *read_file(int fd, char *full_file)
-{
-    char *s_chunk;
-    int bytes_read;
-
-    if (!full_file)
-        full_file = ft_calloc(1, 1);
-    s_chunk = ft_calloc(BUFF_SIZE + 1, sizeof(char));
-    bytes_read = 1;
-    while (bytes_read > 0)
-    {
-        bytes_read = read(fd, s_chunk, BUFF_SIZE);
-        if (bytes_read == -1)
-        {
-            free(s_chunk);
-            return (NULL);
-        }
-        s_chunk[bytes_read] = '\0';
-        full_file = ft_join(full_file, s_chunk);
-        if (ft_strchr(full_file, '\n'))
-            break;
-    }
-    free(s_chunk);
-    return (full_file);
+	tmp = ft_strjoin(full_file, s_chunk);
+	free(full_file);
+	return (tmp);
 }
 
-// char *get_next_line(int fd)
-// {
-     
-// }
+char	*read_file(int fd, char *full_file)
+{
+	char	*s_chunk;
+	int		bytes_read;
+
+	if (!full_file)
+		full_file = ft_calloc(1, 1);
+	s_chunk = ft_calloc(BUFF_SIZE + 1, sizeof(char));
+	bytes_read = 1;
+	while (bytes_read > 0)
+	{
+		bytes_read = read(fd, s_chunk, BUFF_SIZE);
+		if (bytes_read == -1)
+		{
+			free(s_chunk);
+			return (NULL);
+		}
+		s_chunk[bytes_read] = '\0';
+		full_file = ft_join(full_file, s_chunk);
+		if (ft_strchr(full_file, '\n'))
+			break ;
+	}
+	free(s_chunk);
+	return (full_file);
+}
+
+char	*del_line(char *full_file)
+{
+	int		i;
+	int		j;
+	char	*new_buff;
+
+	i = 0;
+	while (full_file[i] != '\0' && full_file[i] != '\n')
+		i++;
+	if (!full_file[i])
+	{
+		free (full_file);
+		return (NULL);
+	}
+	new_buff = ft_calloc(ft_strlen(full_file) - i + 1, sizeof(char));
+	if (!new_buff)
+		return (NULL);
+	i++;
+	j = 0;
+	while (full_file[i] != '\0')
+	{
+		new_buff[j] = full_file[i];
+		i++;
+		j++;
+	}
+	free (full_file);
+	return (new_buff);
+}
+
+char	*read_1st_line(char *full_file)
+{
+	char	*line;
+	int		i;
+
+	i = 0;
+	while (full_file[i] != '\0' && full_file[i] != '\n')
+		i++;
+	line = ft_calloc(i + 2, sizeof(char));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (full_file[i] != '\0' && full_file[i] != '\n')
+	{
+		line[i] = full_file[i];
+		i++;
+	}
+	if (full_file[i] != '\0' && full_file[i] == '\n')
+	{
+		line[i++] = '\n';
+	}
+	return (line);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*buff;
+	char		*line;
+
+	if (fd < 0 || BUFF_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (NULL);
+	buff = read_file(fd, buff);
+	if (!buff || *buff == '\0')
+		return (NULL);
+	line = read_1st_line(buff);
+	buff = del_line(buff);
+	return (line);
+}
 
 int main()
 {
     int fd;
-    char *buff = NULL;
-    fd = open("hello.txt", O_RDONLY);
-    buff = read_file(fd, buff);
-    printf("%s", buff);
-    close(fd);
-    free (buff);
+    char *buff;
 
+    fd = open("file", O_RDONLY);
+    if (fd < 0)
+        return(0);
+    while ((buff = get_next_line(fd)) != NULL)
+    {
+        printf("%s", buff);
+        free(buff);
+    }
+    close(fd);
+    return 0;
 }
