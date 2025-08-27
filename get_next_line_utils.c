@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:15 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/26 20:26:11 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:06:21 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,28 +90,4 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	new_string[i] = '\0';
 	return (new_string);
-}
-
-
-
-char	*ft_strdup(const char *s)
-{
-	char	*d;
-	int		len;
-	int		i;
-
-	if (!s)
-		return (NULL);
-	len = ft_strlen(s);
-	i = 0;
-	d = (char *)malloc(sizeof(char) * (len + 1));
-	if (!d)
-		return (NULL);
-	while (s[i] != '\0')
-	{
-		d[i] = s[i];
-		i++;
-	}
-	d[i] = '\0';
-	return (d);
 }

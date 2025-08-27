@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:23 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/26 20:24:08 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:50:13 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ char	*read_file(int fd, char *full_file)
 
 	if (!full_file)
 		full_file = ft_calloc(1, 1);
-	s_chunk = ft_calloc(BUFF_SIZE + 1, sizeof(char));
+	s_chunk = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
-		bytes_read = read(fd, s_chunk, BUFF_SIZE);
+		bytes_read = read(fd, s_chunk, BUFFER_SIZE);
 		if (bytes_read == -1)
 		{
 			free(s_chunk);
@@ -62,8 +62,6 @@ char	*del_line(char *full_file)
 		return (NULL);
 	}
 	new_buff = ft_calloc(ft_strlen(full_file) - i + 1, sizeof(char));
-	if (!new_buff)
-		return (NULL);
 	i++;
 	j = 0;
 	while (full_file[i] != '\0')
@@ -82,11 +80,13 @@ char	*read_1st_line(char *full_file)
 	int		i;
 
 	i = 0;
+	if (!full_file[i])
+	{
+		return (NULL);
+	}
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 		i++;
 	line = ft_calloc(i + 2, sizeof(char));
-	if (!line)
-		return (NULL);
 	i = 0;
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 	{
@@ -105,29 +105,29 @@ char	*get_next_line(int fd)
 	static char	*buff;
 	char		*line;
 
-	if (fd < 0 || BUFF_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	buff = read_file(fd, buff);
-	if (!buff || *buff == '\0')
+	if (!buff)
 		return (NULL);
 	line = read_1st_line(buff);
 	buff = del_line(buff);
 	return (line);
 }
 
-int main()
-{
-    int fd;
-    char *buff;
+// int main()
+// {
+//     int fd;
+//     char *buff;
 
-    fd = open("file", O_RDONLY);
-    if (fd < 0)
-        return(0);
-    while ((buff = get_next_line(fd)) != NULL)
-    {
-        printf("%s", buff);
-        free(buff);
-    }
-    close(fd);
-    return 0;
-}
+//     fd = open("hello.txt", O_RDONLY);
+//     if (fd < 0)
+//         return(0);
+//     while ((buff = get_next_line(fd)) != NULL)
+//     {
+//         printf("%s", buff);
+//         free(buff);
+//     }
+//     close(fd);
+//     return 0;
+// }
