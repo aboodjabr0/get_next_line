@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:23 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/27 14:16:50 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/27 16:20:26 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 char	*ft_join(char *full_file, char *s_chunk)
 {
 	char	*tmp;
+
 	if (!s_chunk)
 		return (full_file);
 	tmp = ft_strjoin(full_file, s_chunk);
@@ -39,18 +40,12 @@ char	*read_file(int fd, char *full_file)
 	{
 		bytes_read = read(fd, s_chunk, BUFFER_SIZE);
 		if (bytes_read == -1)
-		{
-			free(s_chunk);
 			free(full_file);
-			return (NULL);
-		}
-		s_chunk[bytes_read] = '\0';
+		if (bytes_read >= 0)
+			s_chunk[bytes_read] = '\0';
 		full_file = ft_join(full_file, s_chunk);
 		if (!full_file)
-		{
-			free(s_chunk);
-			return(NULL);
-		}
+			break ;
 		if (ft_strchr(full_file, '\n'))
 			break ;
 	}
@@ -78,16 +73,11 @@ char	*del_line(char *full_file)
 	if (!new_buff)
 	{
 		free(full_file);
-		return(NULL);
+		return (NULL);
 	}
-	i++;
 	j = 0;
-	while (full_file[i] != '\0')
-	{
-		new_buff[j] = full_file[i];
-		i++;
-		j++;
-	}
+	while (full_file[++i] != '\0')
+		new_buff[j++] = full_file[i];
 	free (full_file);
 	return (new_buff);
 }
@@ -106,7 +96,7 @@ char	*read_1st_line(char *full_file)
 		i++;
 	line = ft_calloc(i + 2, sizeof(char));
 	if (!line)
-		return(NULL);
+		return (NULL);
 	i = 0;
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 	{
@@ -142,7 +132,7 @@ char	*get_next_line(int fd)
 	{
 		free(buff);
 		buff = NULL;
-		return NULL; 
+		return (NULL);
 	}
 	buff = del_line(buff);
 	return (line);
