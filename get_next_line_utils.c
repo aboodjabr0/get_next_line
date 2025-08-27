@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:15 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/27 13:06:21 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:11:49 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,14 @@ char	*ft_strjoin(char const *s1, char const *s2)
 {
 	int		i;
 	int		j;
-	size_t	len1;
-	size_t	len2;
 	char	*new_string;
 
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
+	if (!s1)
+		return ft_strdup(s2);
+	if (!s2)
+		return ft_strdup(s1);
 	i = 0;
-	new_string = malloc(sizeof(char) * len1 + len2 + 1);
+	new_string = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!new_string)
 		return (NULL);
 	while (s1[i] != '\0')
@@ -90,4 +90,25 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	new_string[i] = '\0';
 	return (new_string);
+}
+char	*ft_strdup(const char *s)
+{
+	char	*d;
+	int		len;
+	int		i;
+
+	if (!s)
+		return (NULL);
+	len = ft_strlen(s);
+	i = 0;
+	d = (char *)malloc(sizeof(char) * (len + 1));
+	if (!d)
+		return (NULL);
+	while (s[i] != '\0')
+	{
+		d[i] = s[i];
+		i++;
+	}
+	d[i] = '\0';
+	return (d);
 }

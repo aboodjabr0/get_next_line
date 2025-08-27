@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:23 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/27 13:50:13 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:16:50 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,12 @@
 char	*ft_join(char *full_file, char *s_chunk)
 {
 	char	*tmp;
-
+	if (!s_chunk)
+		return (full_file);
 	tmp = ft_strjoin(full_file, s_chunk);
 	free(full_file);
+	if (!tmp)
+		return (NULL);
 	return (tmp);
 }
 
@@ -29,6 +32,8 @@ char	*read_file(int fd, char *full_file)
 	if (!full_file)
 		full_file = ft_calloc(1, 1);
 	s_chunk = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!s_chunk)
+		return (NULL);
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
@@ -36,10 +41,16 @@ char	*read_file(int fd, char *full_file)
 		if (bytes_read == -1)
 		{
 			free(s_chunk);
+			free(full_file);
 			return (NULL);
 		}
 		s_chunk[bytes_read] = '\0';
 		full_file = ft_join(full_file, s_chunk);
+		if (!full_file)
+		{
+			free(s_chunk);
+			return(NULL);
+		}
 		if (ft_strchr(full_file, '\n'))
 			break ;
 	}
@@ -54,6 +65,8 @@ char	*del_line(char *full_file)
 	char	*new_buff;
 
 	i = 0;
+	if (!full_file)
+		return (NULL);
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 		i++;
 	if (!full_file[i])
@@ -62,6 +75,11 @@ char	*del_line(char *full_file)
 		return (NULL);
 	}
 	new_buff = ft_calloc(ft_strlen(full_file) - i + 1, sizeof(char));
+	if (!new_buff)
+	{
+		free(full_file);
+		return(NULL);
+	}
 	i++;
 	j = 0;
 	while (full_file[i] != '\0')
@@ -87,6 +105,8 @@ char	*read_1st_line(char *full_file)
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 		i++;
 	line = ft_calloc(i + 2, sizeof(char));
+	if (!line)
+		return(NULL);
 	i = 0;
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 	{
@@ -106,11 +126,24 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		if (buff)
+		{
+			free(buff);
+			buff = NULL;
+		}
 		return (NULL);
+	}
 	buff = read_file(fd, buff);
 	if (!buff)
 		return (NULL);
 	line = read_1st_line(buff);
+	if (!line)
+	{
+		free(buff);
+		buff = NULL;
+		return NULL; 
+	}
 	buff = del_line(buff);
 	return (line);
 }
