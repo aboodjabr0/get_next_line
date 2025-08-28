@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:18:56 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/27 13:41:38 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/28 12:44:18 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1000000
+#  define BUFFER_SIZE 42
 # endif
 # include <fcntl.h>
 # include <stdio.h>

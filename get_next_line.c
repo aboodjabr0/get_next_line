@@ -6,7 +6,7 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:23 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/27 16:20:26 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/08/28 13:13:40 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ char	*read_file(int fd, char *full_file)
 		full_file = ft_calloc(1, 1);
 	s_chunk = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!s_chunk)
+		free(full_file);
+	if (!s_chunk)
 		return (NULL);
 	bytes_read = 1;
 	while (bytes_read > 0)
@@ -49,8 +51,7 @@ char	*read_file(int fd, char *full_file)
 		if (ft_strchr(full_file, '\n'))
 			break ;
 	}
-	free(s_chunk);
-	return (full_file);
+	return (free(s_chunk), full_file);
 }
 
 char	*del_line(char *full_file)
@@ -89,9 +90,7 @@ char	*read_1st_line(char *full_file)
 
 	i = 0;
 	if (!full_file[i])
-	{
 		return (NULL);
-	}
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 		i++;
 	line = ft_calloc(i + 2, sizeof(char));
@@ -104,9 +103,7 @@ char	*read_1st_line(char *full_file)
 		i++;
 	}
 	if (full_file[i] != '\0' && full_file[i] == '\n')
-	{
 		line[i++] = '\n';
-	}
 	return (line);
 }
 
