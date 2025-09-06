@@ -6,13 +6,13 @@
 /*   By: asauafth <asauafth@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:10:23 by asauafth          #+#    #+#             */
-/*   Updated: 2025/08/28 13:13:40 by asauafth         ###   ########.fr       */
+/*   Updated: 2025/09/06 18:48:51 by asauafth         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_join(char *full_file, char *s_chunk)
+static char	*ft_join(char *full_file, char *s_chunk)
 {
 	char	*tmp;
 
@@ -25,36 +25,36 @@ char	*ft_join(char *full_file, char *s_chunk)
 	return (tmp);
 }
 
-char	*read_file(int fd, char *full_file)
+static char	*read_file(int fd, char *full_file, int *bytes_read)
 {
 	char	*s_chunk;
-	int		bytes_read;
 
-	if (!full_file)
-		full_file = ft_calloc(1, 1);
-	s_chunk = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	s_chunk = ft_calloc(BUFFER_SIZE + 1, 1);
 	if (!s_chunk)
-		free(full_file);
-	if (!s_chunk)
-		return (NULL);
-	bytes_read = 1;
-	while (bytes_read > 0)
 	{
-		bytes_read = read(fd, s_chunk, BUFFER_SIZE);
-		if (bytes_read == -1)
+		free(full_file);
+		return (NULL);
+	}
+	while (!ft_strchr(full_file, '\n') && *bytes_read > 0)
+	{
+		*bytes_read = read(fd, s_chunk, BUFFER_SIZE);
+		if (*bytes_read == -1)
+		{
+			free(s_chunk);
 			free(full_file);
-		if (bytes_read >= 0)
-			s_chunk[bytes_read] = '\0';
+			return (NULL);
+		}
+		if (*bytes_read >= 0)
+			s_chunk[*bytes_read] = '\0';
 		full_file = ft_join(full_file, s_chunk);
 		if (!full_file)
 			break ;
-		if (ft_strchr(full_file, '\n'))
-			break ;
 	}
-	return (free(s_chunk), full_file);
+	free(s_chunk);
+	return (full_file);
 }
 
-char	*del_line(char *full_file)
+static char	*del_line(char *full_file)
 {
 	int		i;
 	int		j;
@@ -83,13 +83,13 @@ char	*del_line(char *full_file)
 	return (new_buff);
 }
 
-char	*read_1st_line(char *full_file)
+static char	*read_1st_line(char *full_file)
 {
 	char	*line;
 	int		i;
 
 	i = 0;
-	if (!full_file[i])
+	if (!full_file || full_file[i] == '\0')
 		return (NULL);
 	while (full_file[i] != '\0' && full_file[i] != '\n')
 		i++;
@@ -111,27 +111,22 @@ char	*get_next_line(int fd)
 {
 	static char	*buff;
 	char		*line;
+	int			bytes_read;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-	{
-		if (buff)
-		{
-			free(buff);
-			buff = NULL;
-		}
+	bytes_read = 1;
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	}
-	buff = read_file(fd, buff);
+	buff = read_file(fd, buff, &bytes_read);
 	if (!buff)
 		return (NULL);
 	line = read_1st_line(buff);
+	buff = del_line(buff);
 	if (!line)
 	{
+		free(line);
 		free(buff);
-		buff = NULL;
 		return (NULL);
 	}
-	buff = del_line(buff);
 	return (line);
 }
 
@@ -141,13 +136,21 @@ char	*get_next_line(int fd)
 //     char *buff;
 
 //     fd = open("hello.txt", O_RDONLY);
-//     if (fd < 0)
-//         return(0);
-//     while ((buff = get_next_line(fd)) != NULL)
-//     {
-//         printf("%s", buff);
+//     // if (fd < 0)
+//     //     return(0);
+//     // while ((buff = get_next_line(fd)) != NULL)
+//     // {
+//     //     printf("%s", buff);
+//     //     free(buff);
+//     // }
+// 	buff = get_next_line(fd);
+// 	printf("%s", buff);
 //         free(buff);
-//     }
+
+// 	// buff = get_next_line(fd);
+// 	// printf("%s", buff);
+//     //     free(buff);
+
 //     close(fd);
 //     return 0;
 // }
